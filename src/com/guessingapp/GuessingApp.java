@@ -5,73 +5,83 @@ import java.util.Scanner;
 
 /**
  * Guessing App
- * UC5 - Game Result Storage
+ * UC6 - Game Restart & Exit
  *
- * Persists game outcome and displays past results.
+ * Allows the player to restart the game or
+ * exit gracefully with proper cleanup.
  *
  * Author: Developer
- * Version: 6.0
+ * Version: 7.0
  */
 public class GuessingApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Welcome to the Guessing App\n");
-
-        GameConfig gameConfig = new GameConfig();
-        gameConfig.showRules();
-
         Scanner scanner = new Scanner(System.in);
-        HintService hintService = new HintService();
-        StorageService storageService = new StorageService();
+        boolean playAgain;
 
-        int attemptsLeft = gameConfig.getMaxAttempts();
-        int totalAttempts = attemptsLeft;
-        int targetNumber = gameConfig.getTargetNumber();
-        boolean isGuessed = false;
+        do {
+            System.out.println("\nWelcome to the Guessing App\n");
 
-        while (attemptsLeft > 0 && !isGuessed) {
+            GameConfig gameConfig = new GameConfig();
+            gameConfig.showRules();
 
-            int guess;
+            HintService hintService = new HintService();
+            StorageService storageService = new StorageService();
 
-            try {
-                System.out.print("Enter your guess: ");
-                guess = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input! Please enter a number.\n");
-                scanner.next();
-                continue;
-            }
+            int attemptsLeft = gameConfig.getMaxAttempts();
+            int totalAttempts = attemptsLeft;
+            int targetNumber = gameConfig.getTargetNumber();
+            boolean isGuessed = false;
 
-            if (guess < 1 || guess > 100) {
-                System.out.println("Please enter a number between 1 and 100.\n");
-                continue;
-            }
+            while (attemptsLeft > 0 && !isGuessed) {
 
-            attemptsLeft--;
+                int guess;
 
-            if (guess == targetNumber) {
-                System.out.println("Correct! You guessed the number.");
-                isGuessed = true;
-            } else {
-                System.out.println(guess < targetNumber ? "Higher!" : "Lower!");
-
-                if (hintService.canGiveHint()) {
-                    hintService.showHint(targetNumber);
+                try {
+                    System.out.print("Enter your guess: ");
+                    guess = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Please enter a number.\n");
+                    scanner.next();
+                    continue;
                 }
 
-                System.out.println("Attempts left: " + attemptsLeft + "\n");
+                if (guess < 1 || guess > 100) {
+                    System.out.println("Please enter a number between 1 and 100.\n");
+                    continue;
+                }
+
+                attemptsLeft--;
+
+                if (guess == targetNumber) {
+                    System.out.println("Correct! You guessed the number.");
+                    isGuessed = true;
+                } else {
+                    System.out.println(guess < targetNumber ? "Higher!" : "Lower!");
+
+                    if (hintService.canGiveHint()) {
+                        hintService.showHint(targetNumber);
+                    }
+
+                    System.out.println("Attempts left: " + attemptsLeft + "\n");
+                }
             }
-        }
 
-        if (!isGuessed) {
-            System.out.println("Game Over! The number was: " + targetNumber);
-        }
+            if (!isGuessed) {
+                System.out.println("Game Over! The number was: " + targetNumber);
+            }
 
-        int attemptsUsed = totalAttempts - attemptsLeft;
-        storageService.saveResult(isGuessed, attemptsUsed);
-        storageService.showPastResults();
+            int attemptsUsed = totalAttempts - attemptsLeft;
+            storageService.saveResult(isGuessed, attemptsUsed);
+            storageService.showPastResults();
 
+            System.out.print("\nDo you want to play again? (yes/no): ");
+            playAgain = scanner.next().equalsIgnoreCase("yes");
+
+        } while (playAgain);
+
+        System.out.println("\nThank you for playing! Goodbye.");
         scanner.close();
     }
 }
