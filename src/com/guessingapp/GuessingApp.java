@@ -4,13 +4,12 @@ import java.util.Scanner;
 
 /**
  * Guessing App
- * UC2 - User Guess Submission
+ * UC3 - Hint Generation
  *
- * Allows the player to submit guesses,
- * tracks attempts, and provides feedback.
+ * Adds limited hints after incorrect guesses.
  *
  * Author: Developer
- * Version: 3.0
+ * Version: 4.0
  */
 public class GuessingApp {
 
@@ -22,6 +21,7 @@ public class GuessingApp {
         gameConfig.showRules();
 
         Scanner scanner = new Scanner(System.in);
+        HintService hintService = new HintService();
 
         int attemptsLeft = gameConfig.getMaxAttempts();
         int targetNumber = gameConfig.getTargetNumber();
@@ -37,13 +37,13 @@ public class GuessingApp {
             if (guess == targetNumber) {
                 System.out.println("Correct! You guessed the number.");
                 isGuessed = true;
-            } else if (guess < targetNumber) {
-                System.out.println("Higher!");
             } else {
-                System.out.println("Lower!");
-            }
+                System.out.println(guess < targetNumber ? "Higher!" : "Lower!");
 
-            if (!isGuessed) {
+                if (hintService.canGiveHint()) {
+                    hintService.showHint(targetNumber);
+                }
+
                 System.out.println("Attempts left: " + attemptsLeft + "\n");
             }
         }
