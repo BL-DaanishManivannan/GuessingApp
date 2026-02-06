@@ -5,13 +5,12 @@ import java.util.Scanner;
 
 /**
  * Guessing App
- * UC4 - Error Handling & Validation
+ * UC5 - Game Result Storage
  *
- * Adds safe input handling to prevent crashes
- * and validates guess range without consuming attempts.
+ * Persists game outcome and displays past results.
  *
  * Author: Developer
- * Version: 5.0
+ * Version: 6.0
  */
 public class GuessingApp {
 
@@ -24,8 +23,10 @@ public class GuessingApp {
 
         Scanner scanner = new Scanner(System.in);
         HintService hintService = new HintService();
+        StorageService storageService = new StorageService();
 
         int attemptsLeft = gameConfig.getMaxAttempts();
+        int totalAttempts = attemptsLeft;
         int targetNumber = gameConfig.getTargetNumber();
         boolean isGuessed = false;
 
@@ -38,17 +39,15 @@ public class GuessingApp {
                 guess = scanner.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input! Please enter a number.\n");
-                scanner.next(); // clear invalid token
-                continue;       // do NOT consume attempt
+                scanner.next();
+                continue;
             }
 
-            // Range validation
             if (guess < 1 || guess > 100) {
                 System.out.println("Please enter a number between 1 and 100.\n");
-                continue; // do NOT consume attempt
+                continue;
             }
 
-            // Valid guess → consume attempt
             attemptsLeft--;
 
             if (guess == targetNumber) {
@@ -68,6 +67,10 @@ public class GuessingApp {
         if (!isGuessed) {
             System.out.println("Game Over! The number was: " + targetNumber);
         }
+
+        int attemptsUsed = totalAttempts - attemptsLeft;
+        storageService.saveResult(isGuessed, attemptsUsed);
+        storageService.showPastResults();
 
         scanner.close();
     }
