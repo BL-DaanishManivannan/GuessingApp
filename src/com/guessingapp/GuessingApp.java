@@ -1,15 +1,17 @@
 package com.guessingapp;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
  * Guessing App
- * UC3 - Hint Generation
+ * UC4 - Error Handling & Validation
  *
- * Adds limited hints after incorrect guesses.
+ * Adds safe input handling to prevent crashes
+ * and validates guess range without consuming attempts.
  *
  * Author: Developer
- * Version: 4.0
+ * Version: 5.0
  */
 public class GuessingApp {
 
@@ -29,9 +31,24 @@ public class GuessingApp {
 
         while (attemptsLeft > 0 && !isGuessed) {
 
-            System.out.print("Enter your guess: ");
-            int guess = scanner.nextInt();
+            int guess;
 
+            try {
+                System.out.print("Enter your guess: ");
+                guess = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a number.\n");
+                scanner.next(); // clear invalid token
+                continue;       // do NOT consume attempt
+            }
+
+            // Range validation
+            if (guess < 1 || guess > 100) {
+                System.out.println("Please enter a number between 1 and 100.\n");
+                continue; // do NOT consume attempt
+            }
+
+            // Valid guess → consume attempt
             attemptsLeft--;
 
             if (guess == targetNumber) {
