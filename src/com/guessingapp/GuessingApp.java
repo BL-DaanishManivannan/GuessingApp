@@ -2,18 +2,20 @@ package com.guessingapp;
 
 /**
  * Guessing App
- * UC0 - Project Initialization
+ * UC1 - Game Initialization
  *
- * Entry point of the application.
- * This use case sets up the project structure
- * and verifies that the application runs.
+ * Initializes the game configuration
+ * and displays game rules.
  *
  * Author: Developer
- * Version: 1.0
+ * Version: 2.0
  */
 public class GuessingApp {
 
     public static void main(String[] args) {
-        System.out.println("Guessing App Initialized.");
+        System.out.println("Welcome to the Guessing App\n");
+
+        GameConfig gameConfig = new GameConfig();
+        gameConfig.showRules();
     }
 }
